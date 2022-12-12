@@ -1,5 +1,6 @@
 import puppeteer from "puppeteer";
 import fs from "fs/promises";
+import fsSync from "fs";
 
 const sleep = async (ms) => {
   return new Promise((res, rej) => {
@@ -207,7 +208,15 @@ const getProductInfo = async (browser, url) => {
       productsUrl.map(async (url) => await getProductInfo(browser, url))
     );
 
-    await fs.writeFile("data/products.json", JSON.stringify(products), "utf8");
+    const dir = "data";
+    if (!fsSync.existsSync(dir)) {
+      console.log("*************************************************************************************")
+      console.log("*************************************************************************************")
+      console.log("*************************************************************************************")
+      fsSync.mkdirSync(dir);
+    }
+
+    await fs.writeFile(`${dir}/products.json`, JSON.stringify(products), "utf8");
 
     await browser.close();
   } catch (error) {
